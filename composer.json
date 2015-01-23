@@ -1,0 +1,11 @@
+{
+    "name": "neworderstudios/woocommerce-stock-logs",
+    "description": "A plugin for logging adjustments to product stock quantities in WooCommerce.",
+    "authors": [
+        {
+            "name": "benrawn",
+            "email": "ben.rawn@gmail.com"
+        }
+    ],
+    "require": {}
+}
