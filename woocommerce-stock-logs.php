@@ -95,7 +95,7 @@ class wcStockLogs {
 		global $wpdb;
 
 		$post_ID = $post ? $post->ID : $_REQUEST['post_ID'];
-		$adjustments = $wpdb->get_results( "select * from " . $wpdb->prefix.WC_STOCKLOGS_TABLE . " where post_ID = {$post_ID}" );
+		$adjustments = $wpdb->get_results( "select * from " . $wpdb->prefix.WC_STOCKLOGS_TABLE . " where post_ID = {$post_ID} order by `date` desc" );
 
 		echo '<style type="text/css">#stock_adjustment_log th { border-bottom:1px solid #eee;padding-bottom:2px; } #stock_adjustment_log td { padding-top:5px; }</style>';
 		echo '<table cellpadding="0" cellspacing="0" width="100%">';
