@@ -7,11 +7,6 @@ Author: New Order Studios
 Author URI: https://github.com/neworderstudios
 ----------------------------------------------------------------------------------------------------------------------*/
 
-/**
- * TODO: integrate unit/label custom fields
- * TODO: i18n for strings
- */
-
 if ( is_admin() ) {
     new wcStockLogs();
 }
@@ -71,7 +66,7 @@ class wcStockLogs {
 		$ajax_success = "function(r){ jQuery('#stock_adjustment_inputs img').fadeOut();jQuery('#stock_adjustment_inputs input').val('');jQuery('#stock_adjustment_inputs select').val('');{$ajax_load_logs}jQuery('#_stock').val(r); }";
 		$ajax_before = "jQuery('#stock_adjustment_inputs img').fadeIn();";
 		$ajax_data = "{post_ID:{$post->ID},adjustment:jQuery('#product_stock_adjustment').val(),notes:jQuery('#product_stock_adjustment_notes').val()}";
-		$ajax_submit = "{$ajax_before}jQuery.post(ajaxurl + '?action=save_wcstock_adjustment',{$ajax_data},{$ajax_success});return false;";
+		$ajax_submit = "if(!jQuery('#stock_adjustment_inputs input').val() || !jQuery('#stock_adjustment_inputs select').val()){ alert('" . __( 'Please complete all fields.', 'woocommerce-stock-logs' ) . "'); }else{ {$ajax_before}jQuery.post(ajaxurl + '?action=save_wcstock_adjustment',{$ajax_data},{$ajax_success}); }return false;";
 
 		$adjustment_notes = array(
 			'' => __( 'Select an action', 'woocommerce-stock-logs' ),
@@ -119,8 +114,7 @@ class wcStockLogs {
 	 * Let's add the Settings link on the plugin page
 	 */
 	public function plugin_action_links( $links ) {
-		$links[] = '<a href="admin.php?page=wc-settings&tab=products&section=inventory">Settings</a>';
-	   return $links;
+	   return array_merge( array( '<a href="admin.php?page=wc-settings&tab=products&section=inventory">Settings</a>' ), $links );
 	}
 
 	/**
