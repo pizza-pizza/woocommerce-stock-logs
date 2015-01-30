@@ -127,6 +127,12 @@ class wcStockLogs {
 		$acf_fields = get_posts( array( 'post_type' => 'acf-field' ) );
 		foreach ( $acf_fields as $field ) $select_fields[$field->post_excerpt] = $field->post_title;
 
+		$local_groups = acf_get_local_field_groups();
+		foreach ( $local_groups as $g ) {
+			$fields = acf_get_local_fields( $g['key'] );
+			foreach ( $fields as $f ) $select_fields[$f['name']] = $f['label'];
+		}
+		
 		$updated_settings = array();
 		foreach ( $settings as $section ) {
 			$updated_settings[] = $section;
