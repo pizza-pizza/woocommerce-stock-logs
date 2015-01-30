@@ -1,0 +1,104 @@
+# Copyright (C) 2015 WooCommerce Stock Logs
+# This file is distributed under the same license as the WooCommerce Stock Logs package.
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Stock Logs 1.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/woocommerce-stock-"
+"logs\n"
+"POT-Creation-Date: 2015-01-30 13:49:12+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: woocommerce-stock-logs.php:45
+msgid "Adjust Stock Quantity"
+msgstr ""
+
+#: woocommerce-stock-logs.php:54
+msgid "Product Stock History"
+msgstr ""
+
+#: woocommerce-stock-logs.php:77
+msgid "Select an action"
+msgstr ""
+
+#: woocommerce-stock-logs.php:78
+msgid "New arrival"
+msgstr ""
+
+#: woocommerce-stock-logs.php:79
+msgid "Damaged goods"
+msgstr ""
+
+#: woocommerce-stock-logs.php:80
+msgid "Delivery incomplete"
+msgstr ""
+
+#: woocommerce-stock-logs.php:81
+msgid "Stock movement"
+msgstr ""
+
+#: woocommerce-stock-logs.php:82
+msgid "Other…"
+msgstr ""
+
+#: woocommerce-stock-logs.php:90
+msgid "Save Adjustment"
+msgstr ""
+
+#: woocommerce-stock-logs.php:107
+msgid "Date / Time"
+msgstr ""
+
+#: woocommerce-stock-logs.php:107
+msgid "User"
+msgstr ""
+
+#: woocommerce-stock-logs.php:107
+msgid "Initial Quantity"
+msgstr ""
+
+#: woocommerce-stock-logs.php:107
+msgid "Adjustment"
+msgstr ""
+
+#: woocommerce-stock-logs.php:107
+msgid "Adjusted Quantity"
+msgstr ""
+
+#: woocommerce-stock-logs.php:107
+msgid "Note"
+msgstr ""
+
+#: woocommerce-stock-logs.php:140
+msgid "Stock Log Options"
+msgstr ""
+
+#: woocommerce-stock-logs.php:145
+msgid "Unit / Quantity Label"
+msgstr ""
+
+#: woocommerce-stock-logs.php:146
+msgid ""
+"Optionally specify an ACF field to designate products' sale unit (e.g. "
+"\"0.5kg\")"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "WooCommerce Stock Logs"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Establishes an audit log of adjustments to product stock."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "New Order Studios"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/neworderstudios"
+msgstr ""

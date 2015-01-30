@@ -1,0 +1,105 @@
+# Copyright (C) 2015 WooCommerce Stock Logs
+# This file is distributed under the same license as the WooCommerce Stock Logs package.
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Stock Logs 1.0\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/woocommerce-stock-"
+"logs\n"
+"POT-Creation-Date: 2015-01-30 12:12:12+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2015-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: woocommerce-stock-logs.php:45
+msgid "Adjust Stock Quantity"
+msgstr "Warenbestand anpassen"
+
+#: woocommerce-stock-logs.php:54
+msgid "Product Stock History"
+msgstr "Warenbestandsverlauf"
+
+#: woocommerce-stock-logs.php:77
+msgid "Select an action"
+msgstr "Grund auswählen"
+
+#: woocommerce-stock-logs.php:78
+msgid "New arrival"
+msgstr "Neueingang"
+
+#: woocommerce-stock-logs.php:79
+msgid "Damaged goods"
+msgstr "Ware kaputt"
+
+#: woocommerce-stock-logs.php:80
+msgid "Delivery incomplete"
+msgstr "Lieferung unvollständig"
+
+#: woocommerce-stock-logs.php:81
+msgid "Stock movement"
+msgstr "Warenbestand verschoben"
+
+#: woocommerce-stock-logs.php:82
+msgid "Other…"
+msgstr "Sonstiges…"
+
+#: woocommerce-stock-logs.php:91
+msgid "Save Adjustment"
+msgstr "Anpassung speichern"
+
+#: woocommerce-stock-logs.php:107
+msgid "Date / Time"
+msgstr "Datum / Zeit"
+
+#: woocommerce-stock-logs.php:107
+msgid "User"
+msgstr "Benutzer"
+
+#: woocommerce-stock-logs.php:107
+msgid "Initial Quantity"
+msgstr "Erstbestand"
+
+#: woocommerce-stock-logs.php:107
+msgid "Adjustment"
+msgstr "Anpassung"
+
+#: woocommerce-stock-logs.php:107
+msgid "Adjusted Quantity"
+msgstr "Angepasster Bestand"
+
+#: woocommerce-stock-logs.php:107
+msgid "Note"
+msgstr "Notiz"
+
+#: woocommerce-stock-logs.php:141
+msgid "Stock Log Options"
+msgstr "Stock Log Einstellungen"
+
+#: woocommerce-stock-logs.php:146
+msgid "Unit / Quantity Label"
+msgstr "Einheiten-/Mengenbezeichnung"
+
+#: woocommerce-stock-logs.php:147
+msgid ""
+"Optionally specify an ACF field to designate products' sale unit (e.g. "
+"\"0.5kg\")"
+msgstr "(Optional) ACF Feld für Produktverkaufseinheit festlegen (z.B. "
+"\"0.5kg\")"
+
+#. Plugin Name of the plugin/theme
+msgid "WooCommerce Stock Logs"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Establishes an audit log of adjustments to product stock."
+msgstr "Erstellt einen Kontroll-Log von Warenbestandsänderungen."
+
+#. Author of the plugin/theme
+msgid "New Order Studios"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/neworderstudios"
+msgstr ""
