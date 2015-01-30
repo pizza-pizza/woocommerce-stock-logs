@@ -63,11 +63,11 @@ class wcStockLogs {
 	 */
 	public function render_adjustment_meta_box( $post ) {
 		$ajax_load_logs = "jQuery('#stock_adjustment_log .inside').load(ajaxurl + '?action=load_wcstock_report',{post_ID:{$post->ID}});";
-		$ajax_success = "function(r){ jQuery('#stock_adjustment_inputs img').fadeOut();jQuery('#stock_adjustment_inputs input').val('');jQuery('#stock_adjustment_inputs select').val('');{$ajax_load_logs}jQuery('#_stock').val(r); }";
+		$ajax_success = "function(r){ jQuery('#stock_adjustment_inputs img').fadeOut();jQuery('#stock_adjustment_inputs input').val('');jQuery('#stock_adjustment_inputs select').val('');jQuery('#wcsl_unit_total').text('0');{$ajax_load_logs}jQuery('#_stock').val(r); }";
 		$ajax_before = "jQuery('#stock_adjustment_inputs img').fadeIn();";
 		$ajax_data = "{post_ID:{$post->ID},adjustment:jQuery('#product_stock_adjustment').val(),notes:jQuery('#product_stock_adjustment_notes').val()}";
 		$ajax_submit = "if(!jQuery('#stock_adjustment_inputs input').val() || !jQuery('#stock_adjustment_inputs select').val()){ alert('" . __( 'Please complete all fields.', 'woocommerce-stock-logs' ) . "'); }else{ {$ajax_before}jQuery.post(ajaxurl + '?action=save_wcstock_adjustment',{$ajax_data},{$ajax_success}); }return false;";
-
+		
 		$adjustment_notes = array(
 			'' => __( 'Select an action', 'woocommerce-stock-logs' ),
 			__( 'New arrival', 'woocommerce-stock-logs' ),
@@ -77,8 +77,10 @@ class wcStockLogs {
 			__( 'Other…', 'woocommerce-stock-logs' ) );
 		$unit_label_field = get_option( 'wc_stocklogs_acf_label', 1 );
 		$unit_label = $unit_label_field ? get_field( $unit_label_field, $post->ID ) : NULL;
+		$unit_multiplier = 'jQuery(\'#wcsl_unit_total\').text(jQuery(\'#product_stock_adjustment\').val() * ' . ($unit_label ? $unit_label : 0) . ');';
 
-		echo '<input type="number" id="product_stock_adjustment" placeholder="0" style="width:' . ( $unit_label ? 70 : 100 ) . '%;" />' . ( $unit_label ? "<span style='display:inline-block;width:29%;text-align:center;'> x $unit_label</span>" : '' );
+		echo '<input type="number" id="product_stock_adjustment" placeholder="0" style="width:' . ( $unit_label ? 40 : 100 ) . '%;" onchange="' . $unit_multiplier . '" onkeyup="' . $unit_multiplier . '" />';
+		echo ( $unit_label ? "<p style='margin:0;display:inline-block;width:59%;overflow:hidden;vertical-align:middle;'>&nbsp; x {$unit_label}kg = <span id='wcsl_unit_total'>0</span>kg</p>" : '' );
 		echo '<select id="product_stock_adjustment_notes" style="width:100%;margin-top:5px;">';
 		foreach ( $adjustment_notes as $k => $n ) echo '<option value="' . (!is_numeric($k) ? $k : $n) . '">' . $n . '</option>';
 		echo '</select>';
