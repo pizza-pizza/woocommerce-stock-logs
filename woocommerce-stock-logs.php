@@ -75,12 +75,17 @@ class wcStockLogs {
 			__( 'Delivery incomplete', 'woocommerce-stock-logs' ),
 			__( 'Stock movement', 'woocommerce-stock-logs' ),
 			__( 'Other…', 'woocommerce-stock-logs' ) );
-		$unit_label_field = get_option( 'wc_stocklogs_acf_label', 1 );
-		$unit_label = $unit_label_field ? get_field( $unit_label_field, $post->ID ) : NULL;
-		$unit_multiplier = 'jQuery(\'#wcsl_unit_total\').text(jQuery(\'#product_stock_adjustment\').val() * ' . ($unit_label ? $unit_label : 0) . ');';
+		
+		$unit_quantity_field = get_option( 'wc_stocklogs_acf_label', 1 );
+		$unit_quantity = $unit_quantity_field ? get_field( $unit_quantity_field, $post->ID ) : 1;
 
-		echo '<input type="number" id="product_stock_adjustment" placeholder="0" style="width:' . ( $unit_label ? 40 : 100 ) . '%;" onchange="' . $unit_multiplier . '" onkeyup="' . $unit_multiplier . '" />';
-		echo ( $unit_label ? "<p style='margin:0;display:inline-block;width:59%;overflow:hidden;vertical-align:middle;'>&nbsp; x {$unit_label}kg = <span id='wcsl_unit_total'>0</span>kg</p>" : '' );
+		$unit_vs_weight_field = get_option( 'wc_stocklogs_acf_unit_weight', 1 );
+		$unit_label = $unit_vs_weight_field ? ( get_field( $unit_vs_weight_field, $post->ID ) ? '' : 'kg' ) : 'kg';
+		
+		$unit_multiplier = 'jQuery(\'#wcsl_unit_total\').text(jQuery(\'#product_stock_adjustment\').val() * ' . ($unit_quantity ? $unit_quantity : 0) . ');';
+
+		echo '<input type="number" id="product_stock_adjustment" placeholder="0" style="width:' . ( $unit_quantity ? 40 : 100 ) . '%;" onchange="' . $unit_multiplier . '" onkeyup="' . $unit_multiplier . '" />';
+		echo ( $unit_quantity ? "<p style='margin:0;display:inline-block;width:59%;overflow:hidden;vertical-align:middle;'>&nbsp; x {$unit_quantity}{$unit_label} = <span id='wcsl_unit_total'>0</span>{$unit_label}</p>" : '' );
 		echo '<select id="product_stock_adjustment_notes" style="width:100%;margin-top:5px;">';
 		foreach ( $adjustment_notes as $k => $n ) echo '<option value="' . (!is_numeric($k) ? $k : $n) . '">' . $n . '</option>';
 		echo '</select>';
@@ -147,6 +152,15 @@ class wcStockLogs {
 					'title'		=> __( 'Unit / Quantity Label', 'woocommerce-stock-logs' ),
 					'desc'		=> __( 'Optionally specify an ACF field to designate products\' sale unit (e.g. "0.5kg")', 'woocommerce-stock-logs' ),
 					'id'		=> 'wc_stocklogs_acf_label',
+					'default'	=> '',
+					'type'		=> 'select',
+					'options'	=> $select_fields,
+					'desc_tip'	=>  true
+				);
+				$updated_settings[] = array(
+					'title'		=> __( 'Unit Sales', 'woocommerce-stock-logs' ),
+					'desc'		=> __( 'Optionally specify an ACF true/false field indicating whether products are sold by unit or by weight.', 'woocommerce-stock-logs' ),
+					'id'		=> 'wc_stocklogs_acf_unit_weight',
 					'default'	=> '',
 					'type'		=> 'select',
 					'options'	=> $select_fields,
