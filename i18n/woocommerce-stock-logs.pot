@@ -87,6 +87,14 @@ msgid ""
 "\"0.5kg\")"
 msgstr ""
 
+#: woocommerce-stock-logs.php
+msgid "Unit Sales"
+msgstr ""
+
+#: woocommerce-stock-logs.php
+msgid "Optionally specify an ACF true/false field indicating whether products are sold by unit or by weight."
+msgstr ""
+
 #. Plugin Name of the plugin/theme
 msgid "WooCommerce Stock Logs"
 msgstr ""

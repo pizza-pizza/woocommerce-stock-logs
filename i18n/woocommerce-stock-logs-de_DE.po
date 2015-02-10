@@ -88,6 +88,14 @@ msgid ""
 msgstr "(Optional) ACF Feld für Produktverkaufseinheit festlegen (z.B. "
 "\"0.5kg\")"
 
+#: woocommerce-stock-logs.php
+msgid "Unit Sales"
+msgstr "Verkaufseinheit"
+
+#: woocommerce-stock-logs.php
+msgid "Optionally specify an ACF true/false field indicating whether products are sold by unit or by weight."
+msgstr "Optionales ACF True/False Feld angeben um zwischen Stück oder Gewicht Verkaufseinheiten zu wechseln."
+
 #. Plugin Name of the plugin/theme
 msgid "WooCommerce Stock Logs"
 msgstr ""
