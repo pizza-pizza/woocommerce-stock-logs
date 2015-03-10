@@ -2,10 +2,12 @@
 /*----------------------------------------------------------------------------------------------------------------------
 Plugin Name: WooCommerce Stock Logs
 Description: Establishes an audit log of adjustments to product stock.
-Version: 1.0
+Version: 1.0.1
 Author: New Order Studios
 Author URI: https://github.com/neworderstudios
 ----------------------------------------------------------------------------------------------------------------------*/
+
+/* TODO: add notice regarding requirement for managed stock to be enabled */
 
 if ( is_admin() ) {
     new wcStockLogs();
@@ -20,6 +22,7 @@ class wcStockLogs {
 		load_plugin_textdomain( 'woocommerce-stock-logs', false, basename( dirname(__FILE__) ) . '/i18n' );
 
 		add_action( 'init', array( $this, 'stocklogs_init_db' ) );
+		add_action( 'woocommerce_product_quick_edit_end', array( $this, 'render_quickedit' ) );
 		add_action( 'wp_ajax_save_wcstock_adjustment', array( $this, 'save_stock_adjustment' ) );
 		add_action( 'wp_ajax_load_wcstock_report', array( $this, 'render_report_meta_box' ) );
 
@@ -115,6 +118,19 @@ class wcStockLogs {
 		echo '</tbody></table>';
 
 		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) die();
+	}
+
+	/**
+	 * Give the people what they want.
+	 */
+	public function render_quickedit() {
+		global $post;
+		?>
+		<div id="stock_adjustment_inputs" style="clear:both;">
+			<h4>Adjust Sock Quantity</h4>
+			<?php $this->render_adjustment_meta_box($post); ?>
+		</div>
+		<?php
 	}
 
 	/**
