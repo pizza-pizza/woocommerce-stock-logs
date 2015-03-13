@@ -2,12 +2,10 @@
 /*----------------------------------------------------------------------------------------------------------------------
 Plugin Name: WooCommerce Stock Logs
 Description: Establishes an audit log of adjustments to product stock.
-Version: 1.0.1
+Version: 1.1.0
 Author: New Order Studios
 Author URI: https://github.com/neworderstudios
 ----------------------------------------------------------------------------------------------------------------------*/
-
-/* TODO: add notice regarding requirement for managed stock to be enabled */
 
 if ( is_admin() ) {
     new wcStockLogs();
@@ -22,9 +20,11 @@ class wcStockLogs {
 		load_plugin_textdomain( 'woocommerce-stock-logs', false, basename( dirname(__FILE__) ) . '/i18n' );
 
 		add_action( 'init', array( $this, 'stocklogs_init_db' ) );
-		add_action( 'woocommerce_product_quick_edit_end', array( $this, 'render_quickedit' ) );
+		add_action( 'quick_edit_custom_box', array( $this, 'get_quickedit_post' ), 10, 2 );
+		add_action( 'wp_ajax_render_wcstock_quickedit', array( $this, 'render_quickedit' ), 10, 2 );
 		add_action( 'wp_ajax_save_wcstock_adjustment', array( $this, 'save_stock_adjustment' ) );
 		add_action( 'wp_ajax_load_wcstock_report', array( $this, 'render_report_meta_box' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'add_quickedit_scripts' ) );
 
 		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( $this, 'plugin_action_links' ) );
 		add_filter( 'woocommerce_inventory_settings', array( $this, 'render_plugin_settings' ) );
@@ -66,8 +66,8 @@ class wcStockLogs {
 	 */
 	public function render_adjustment_meta_box( $post ) {
 		$ajax_load_logs = "jQuery('#stock_adjustment_log .inside').load(ajaxurl + '?action=load_wcstock_report',{post_ID:{$post->ID}});";
-		$ajax_success = "function(r){ jQuery('#stock_adjustment_inputs img').fadeOut();jQuery('#stock_adjustment_inputs input').val('');jQuery('#stock_adjustment_inputs select').val('');jQuery('#wcsl_unit_total').text('0');{$ajax_load_logs}jQuery('#_stock').val(r); }";
-		$ajax_before = "jQuery('#stock_adjustment_inputs img').fadeIn();";
+		$ajax_success = "function(r){ jQuery('#stock_adjustment_inputs img').fadeOut();jQuery('#stock_adjustment_inputs input').val('');jQuery('#stock_adjustment_inputs select').val('');jQuery('#wcsl_unit_total').text('0');{$ajax_load_logs}jQuery('#_stock,.inline-edit-product:visible input[name=_stock]').val(r); }";
+		$ajax_before = "if(!jQuery('input[name=_manage_stock]:visible,#_manage_stock').is(':checked')){ alert('This product is not configured to manage stock. Please update the product configuration and try again.');return false; }jQuery('#stock_adjustment_inputs img').fadeIn();";
 		$ajax_data = "{post_ID:{$post->ID},adjustment:jQuery('#product_stock_adjustment').val(),notes:jQuery('#product_stock_adjustment_notes').val()}";
 		$ajax_submit = "if(!jQuery('#stock_adjustment_inputs input').val() || !jQuery('#stock_adjustment_inputs select').val()){ alert('" . __( 'Please complete all fields.', 'woocommerce-stock-logs' ) . "'); }else{ {$ajax_before}jQuery.post(ajaxurl + '?action=save_wcstock_adjustment',{$ajax_data},{$ajax_success}); }return false;";
 		
@@ -121,20 +121,44 @@ class wcStockLogs {
 	}
 
 	/**
-	 * Give the people what they want.
+	 * Let's add a container for our quickedit module.
+	 * Oof.
+	 *
+	 * @param string $column_name
+	 * @param string $post_type
 	 */
-	public function render_quickedit() {
-		global $post;
+	public function get_quickedit_post( $column_name, $post_type ) {
+		if ( $column_name != 'woocommerce_waitlist_count' || $post_type != 'product' ) return;
 		?>
-		<div id="stock_adjustment_inputs" style="clear:both;">
-			<h4>Adjust Sock Quantity</h4>
-			<?php $this->render_adjustment_meta_box($post); ?>
-		</div>
+		<style type="text/css">#stock_adjustment_inputs a{float:right;}</style>
+		<fieldset class="inline-edit-col-left">
+			<div id="stock_adjustment_inputs" class="inline-edit-col" style="margin-top:35px;"> </div>
+		</fieldset>
 		<?php
 	}
 
 	/**
+	 * We'll add some JS to send us the row's post id in quickedit mode.
+	 */
+	public function add_quickedit_scripts( $hook ) {
+		if ( $hook == 'edit.php' && @$_GET['post_type'] == 'product' ) wp_enqueue_script( 'wc_stocklogs_quickedit', plugins_url('scripts/admin_quickedit.js', __FILE__), false, null, true );
+	}
+
+	/**
+	 * Drop some markup in our quickedit container.
+	 */
+	public function render_quickedit() {
+		?>
+		<h4><?php _e( 'Adjust Stock Quantity', 'woocommerce-stock-logs' ); ?></h4>
+		<?php
+		$this->render_adjustment_meta_box( get_post( $_REQUEST['post_ID'] ) );
+		die();
+	}
+
+	/**
 	 * Let's add the Settings link on the plugin page
+	 *
+	 * @param array $links
 	 */
 	public function plugin_action_links( $links ) {
 	   return array_merge( array( '<a href="admin.php?page=wc-settings&tab=products&section=inventory">Settings</a>' ), $links );
@@ -142,6 +166,8 @@ class wcStockLogs {
 
 	/**
 	 * Let's update the Settings page
+	 *
+	 * @param array $settings
 	 */
 	public function render_plugin_settings( $settings ) {
 		$select_fields = array('' => '');
