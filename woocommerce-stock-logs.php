@@ -80,10 +80,10 @@ class wcStockLogs {
 			__( 'Other…', 'woocommerce-stock-logs' ) );
 		
 		$unit_quantity_field = get_option( 'wc_stocklogs_acf_label', 1 );
-		$unit_quantity = $unit_quantity_field ? get_field( $unit_quantity_field, $post->ID ) : 1;
+		$unit_quantity = @array_pop(get_post_meta( $post->ID, '_wc_gwi_product_unit_size' ));
 
 		$unit_vs_weight_field = get_option( 'wc_stocklogs_acf_unit_weight', 1 );
-		$unit_label = $unit_vs_weight_field ? ( get_field( $unit_vs_weight_field, $post->ID ) ? '' : 'kg' ) : 'kg';
+		$unit_label = @array_pop(get_post_meta( $post->ID, '_wc_gwi_product_by_unit' )) ? '' : 'kg';
 		
 		$unit_multiplier = 'jQuery(\'#wcsl_unit_total\').text(jQuery(\'#product_stock_adjustment\').val() * ' . ($unit_quantity ? $unit_quantity : 0) . ');';
 
