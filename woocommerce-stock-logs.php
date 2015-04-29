@@ -2,7 +2,7 @@
 /*----------------------------------------------------------------------------------------------------------------------
 Plugin Name: WooCommerce Stock Logs
 Description: Establishes an audit log of adjustments to product stock.
-Version: 1.1.0
+Version: 1.2.0
 Author: New Order Studios
 Author URI: https://github.com/neworderstudios
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -65,6 +65,9 @@ class wcStockLogs {
 	 * @param WP_Post $post The post object.
 	 */
 	public function render_adjustment_meta_box( $post ) {
+		$dec = wc_get_price_decimal_separator();
+		$tho = wc_get_price_thousand_separator();
+
 		$ajax_load_logs = "jQuery('#stock_adjustment_log .inside').load(ajaxurl + '?action=load_wcstock_report',{post_ID:{$post->ID}});";
 		$ajax_success = "function(r){ jQuery('#stock_adjustment_inputs img').fadeOut();jQuery('#stock_adjustment_inputs input').val('');jQuery('#stock_adjustment_inputs select').val('');jQuery('#wcsl_unit_total').text('0');{$ajax_load_logs}jQuery('#_stock,.inline-edit-product:visible input[name=_stock]').val(r); }";
 		$ajax_before = "if(!jQuery('input[name=_manage_stock]:visible,#_manage_stock').is(':checked')){ alert('This product is not configured to manage stock. Please update the product configuration and try again.');return false; }jQuery('#stock_adjustment_inputs img').fadeIn();";
@@ -79,21 +82,55 @@ class wcStockLogs {
 			__( 'Stock movement', 'woocommerce-stock-logs' ),
 			__( 'Other…', 'woocommerce-stock-logs' ) );
 		
-		$unit_quantity_field = get_option( 'wc_stocklogs_acf_label', 1 );
-		$unit_quantity = @array_pop(get_post_meta( $post->ID, '_wc_gwi_product_unit_size' ));
-
-		$unit_vs_weight_field = get_option( 'wc_stocklogs_acf_unit_weight', 1 );
-		$unit_label = @array_pop(get_post_meta( $post->ID, '_wc_gwi_product_by_unit' )) ? '' : 'kg';
+		$unit_quantity = get_post_meta( $post->ID, '_wc_gwi_product_unit_size', 1 );
+		$unit_vs_weight = get_post_meta( $post->ID, '_wc_gwi_product_by_unit', 1 );
+		$unit_label = get_post_meta( $post->ID, '_wc_gwi_product_by_unit', 1 ) ? '' : 'kg';
 		
-		$unit_multiplier = 'jQuery(\'#wcsl_unit_total\').text(jQuery(\'#product_stock_adjustment\').val() * ' . ($unit_quantity ? $unit_quantity : 0) . ');';
-
-		echo '<input type="number" id="product_stock_adjustment" placeholder="0" style="width:' . ( $unit_quantity ? 40 : 100 ) . '%;" onchange="' . $unit_multiplier . '" onkeyup="' . $unit_multiplier . '" />';
-		echo ( $unit_quantity ? "<p style='margin:0;display:inline-block;width:59%;overflow:hidden;vertical-align:middle;'>&nbsp; x {$unit_quantity}{$unit_label} = <span id='wcsl_unit_total'>0</span>{$unit_label}</p>" : '' );
+		echo '<input type="number" id="product_stock_adjustment" placeholder="0" style="width:' . ( $unit_quantity && !$unit_vs_weight ? 40 : 100 ) . '%;" />';
+		echo "<p id='wcslUnitCoeff' style='margin:0;display:" . ( $unit_quantity && !$unit_vs_weight ? 'inline-block' : 'none' ) . ";width:59%;overflow:hidden;vertical-align:middle;'>&nbsp; x <span id='wcsl_unit_label'>{$unit_quantity}{$unit_label}</span> = <span id='wcsl_unit_total'>0</span>{$unit_label}</p>";
 		echo '<select id="product_stock_adjustment_notes" style="width:100%;margin-top:5px;">';
 		foreach ( $adjustment_notes as $k => $n ) echo '<option value="' . (!is_numeric($k) ? $k : $n) . '">' . $n . '</option>';
 		echo '</select>';
 		echo '<a class="button button-primary button-large" href="#" onclick="' . $ajax_submit . '" style="margin-top:5px;">' . __( 'Save Adjustment', 'woocommerce-stock-logs' ) . '</a> ';
 		echo '&nbsp;<img src="images/loading.gif" style="display:none;padding-top:12px;" />';
+		?>
+
+		<script type="text/javascript">
+		jQuery('document').ready(function($){
+			/* We want to bind some logic to the Unit Sales toggle */
+			$('#_wc_gwi_product_unit_size,#_wc_gwi_product_by_unit').change(function(){
+				wcslUpdateCoefficient();
+			});
+
+			/* We also want to bind some logic to the adjustment input */
+			$('#product_stock_adjustment').on('change,keyup',function(){
+				var quantity = $('#_wc_gwi_product_by_unit').length ? ( wcslCheckNoQuantity() ? 0 : $("#_wc_gwi_product_unit_size").val() ) : <?php echo ( $unit_quantity && !$unit_vs_weight ? $unit_quantity : 0 ); ?>;
+				$('#wcsl_unit_total').text( $('#product_stock_adjustment').val() * rmCurFormat(quantity) );
+			});
+
+			/* Finally, we would like our coefficient label to reflect current values */
+			$('#_wc_gwi_product_unit_size').change(function(){
+				$('#wcsl_unit_label').text( $('#_wc_gwi_product_unit_size').val() + 'kg' );
+			});
+
+			function wcslCheckNoQuantity(){
+				return $("#_wc_gwi_product_by_unit").is(":checked")
+					|| ( !$("#_wc_gwi_product_unit_size").val() || $("#_wc_gwi_product_unit_size").val() == 0 );
+			}
+
+			function wcslUpdateCoefficient(){
+				$("#product_stock_adjustment").css( 'width', wcslCheckNoQuantity() ? '100%' : '40%' );
+				$("#wcslUnitCoeff").css( 'display', wcslCheckNoQuantity() ? 'none' : 'inline-block' );
+			}
+
+			function rmCurFormat(v){
+				var symbols = {'<?php echo $dec; ?>':'.','<?php echo $tho; ?>':','};
+				return v.replace(/<?php echo ($dec == '.' ? '\\' : '') . $dec; ?>|<?php echo ($tho == '.' ? '\\' : '') . $tho; ?>/gi, function(matched){ return symbols[matched]; });
+			}
+		});
+		</script>
+
+		<?php
 	}
 
 	/**
@@ -105,7 +142,7 @@ class wcStockLogs {
 		global $wpdb;
 
 		$post_ID = $post ? $post->ID : $_REQUEST['post_ID'];
-		$adjustments = $wpdb->get_results( "select * from " . $wpdb->prefix.WC_STOCKLOGS_TABLE . " where post_ID = {$post_ID} order by `date` desc" );
+		$adjustments = $wpdb->get_results( "select * from " . $wpdb->prefix . WC_STOCKLOGS_TABLE . " where post_ID = {$post_ID} order by `date` desc" );
 
 		echo '<style type="text/css">#stock_adjustment_log th { border-bottom:1px solid #eee;padding-bottom:2px; } #stock_adjustment_log td { padding-top:5px; }</style>';
 		echo '<table cellpadding="0" cellspacing="0" width="100%">';
