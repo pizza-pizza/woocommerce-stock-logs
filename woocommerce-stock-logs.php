@@ -2,7 +2,7 @@
 /*----------------------------------------------------------------------------------------------------------------------
 Plugin Name: WooCommerce Stock Logs
 Description: Establishes an audit log of adjustments to product stock.
-Version: 1.2.0
+Version: 1.2.1
 Author: New Order Studios
 Author URI: https://github.com/neworderstudios
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -150,7 +150,7 @@ class wcStockLogs {
 		foreach ( $adjustments as $a ) {
 			$user = get_user_by( 'id', $a->user_ID );
 			$initial_quantity = $a->adjusted_quantity - $a->adjustment;
-			echo "<tr><td align='left'>{$a->date}</td><td align='left'>{$user->display_name}</td><td align='right'>" . $initial_quantity . "</td><td align='right'>" . ( $a->adjustment >= 0 ? '+' : '' ) . $a->adjustment . "</td><td align='right' style='padding-right:20px;'>" . ( $a->adjusted_quantity ) . "</td><td align='left'>{$a->notes}</td></tr>";
+			echo "<tr><td align='left'>{$a->date}</td><td align='left'>" . ( $user ? $user->display_name : "[ deleted user: {$a->user_ID} ]" ) . "</td><td align='right'>" . $initial_quantity . "</td><td align='right'>" . ( $a->adjustment >= 0 ? '+' : '' ) . $a->adjustment . "</td><td align='right' style='padding-right:20px;'>" . ( $a->adjusted_quantity ) . "</td><td align='left'>{$a->notes}</td></tr>";
 		}
 		echo '</tbody></table>';
 
