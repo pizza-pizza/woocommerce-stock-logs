@@ -165,11 +165,11 @@ class wcStockLogs {
 	 * @param string $post_type
 	 */
 	public function get_quickedit_post( $column_name, $post_type ) {
-		if ( $column_name != 'woocommerce_waitlist_count' || $post_type != 'product' ) return;
+		if ( $column_name != 'cost' || $post_type != 'product' ) return;
 		?>
 		<style type="text/css">#stock_adjustment_inputs a{float:right;}</style>
 		<fieldset class="inline-edit-col-left">
-			<div id="stock_adjustment_inputs" class="inline-edit-col" style="margin-top:35px;"> </div>
+			<div id="stock_adjustment_inputs" class="inline-edit-col" style="margin-top:-10px;"> </div>
 		</fieldset>
 		<?php
 	}
