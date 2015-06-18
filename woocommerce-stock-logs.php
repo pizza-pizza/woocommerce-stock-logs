@@ -2,7 +2,7 @@
 /*----------------------------------------------------------------------------------------------------------------------
 Plugin Name: WooCommerce Stock Logs
 Description: Establishes an audit log of adjustments to product stock.
-Version: 1.2.1
+Version: 1.5.0
 Author: New Order Studios
 Author URI: https://github.com/neworderstudios
 ----------------------------------------------------------------------------------------------------------------------*/
@@ -263,7 +263,8 @@ class wcStockLogs {
 		$user_id = $current_user->ID;
 		
 		$product = new WC_Product( $_REQUEST['post_ID'] );
-		$new_stock = $product->increase_stock( $_REQUEST['adjustment'] );
+		$oos_threshold = get_post_meta( $_REQUEST['post_ID'], '_out_of_stock_threshold_number', true );
+		$new_stock = $product->increase_stock( $_REQUEST['adjustment'] ) + $oos_threshold;
 
 		$wpdb->insert( $wpdb->prefix.WC_STOCKLOGS_TABLE, array( 'post_ID' => $_REQUEST['post_ID'], 'user_ID' => $user_id, 'adjustment' => $_REQUEST['adjustment'],'adjusted_quantity' => $new_stock,'notes' => $_REQUEST['notes'] ) );
 		echo $new_stock;
